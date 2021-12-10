@@ -1,0 +1,27 @@
+* Test/Sample data for aws-devicefarm action                          :TOC_4:
+  - [[#introduction][Introduction]]
+    - [[#python-packages][Python packages]]
+    - [[#test-specification][Test specification]]
+    - [[#android-test-application][Android test application]]
+
+** Introduction
+This repository contains various files useful for testing, evaluating or taking into use the [[https://github.com/aardsoft/aws-devicefarm][AWS devicefarm action]].
+
+The following file types - all downloadable from the [[https://github.com/aardsoft/aws-devicefarm-sample-data/releases][release page]], and usable as remote source in the actions - are available:
+
+*** Python packages
+The =tests= directory contains some dummy python tests. This is useful for making the AWS upload validator happy when only using custom tests without any of the AWS supported frameworks.
+
+Packages are built with and without wheelhouse, for python2 and python3. AWS requires a wheelhouse directory for the default test specification, but it can be safely omitted to reduce the archive size for custom specifications.
+
+When using a custom test specification typically the python3 package without wheelhouse is the one to use.
+
+For using the default specification a python2 one with wheelhouse is required - AWS only supports ancient python versions in that mode.
+
+*** Test specification
+The file =test_spec.yaml= contains a sample test specification for the included sample application. Outside of unit testing this is mainly useful for quickly testing a workflow before plugging in own applications.
+
+*** Android test application
+The directory =android= contains a minimalistic application showing how to include instrumentation tests in a single binary - mainly useful for teshing libraries, not so much for actually shipping an application.
+
+Additionally it shows how to pass parameters to an application invoked by am in regular and instrumentation modes.
