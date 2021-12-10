@@ -28,18 +28,21 @@ jobs:
         fi
     - name: Create python3 venv
       run: |
-        virtualenv -p python3 env3
-        ./env3/bin/pip install Appium-Python-Client
-        ./env3/bin/pip freeze > env3/requirements.txt
-        zip sample_env_python3.zip -j env3/requirements.txt
-        zip sample_env_python3.zip -r tests
-    - name: Create python2 venv
-      run: |
-        virtualenv -p python2 env2
-        ./env2/bin/pip install Appium-Python-Client==0.52
-        ./env2/bin/pip freeze > env2/requirements.txt
-        zip sample_env_python2.zip -j env2/requirements.txt
-        zip sample_env_python2.zip -r tests
+        for _python in 2 3; do
+          virtualenv -p python${_python} env${_python}
+          if [ "${_python}" -eq 2 ]; then
+            ./env${_python}/bin/pip install Appium-Python-Client==0.52
+          else
+            ./env${_python}/bin/pip install Appium-Python-Client
+          fi
+          ./env${_python}/bin/pip freeze | grep -v "pkg-resources" | grep -v "pkg_resources" > env${_python}/requirements.txt
+          zip sample_env_python${_python}.zip -j env${_python}/requirements.txt
+          zip sample_env_python${_python}.zip -r tests
+          cp sample_env_python${_python}.zip sample_env_python${_python}_wh.zip
+          rm -Rf wheelhouse
+          ./env${_python}/bin/pip wheel -r env${_python}/requirements.txt -w wheelhouse
+          zip sample_env_python${_python}_wh.zip -r wheelhouse
+        done
 #    - name: Build Android app
 #      working-directory: ./sample-data/android
 #      run: |
@@ -51,3 +54,5 @@ jobs:
         files: |
           sample_env_python2.zip
           sample_env_python3.zip
+          sample_env_python2_wh.zip
+          sample_env_python3_wh.zip
