@@ -1,0 +1,28 @@
+version: 0.1
+
+phases:
+  install:
+    commands:
+      - export PYTHON_VERSION=3
+
+  pre_test:
+    commands:
+      - adb -s $DEVICEFARM_DEVICE_UDID shell pm grant fi.aardsoft.devicefarmsample android.permission.READ_EXTERNAL_STORAGE
+      - adb -s $DEVICEFARM_DEVICE_UDID shell pm grant fi.aardsoft.devicefarmsample android.permission.WRITE_EXTERNAL_STORAGE
+
+  test:
+    commands:
+      - adb logcat -v time | tee log-output.txt &
+      - adb -s $DEVICEFARM_DEVICE_UDID shell am instrument -w -r -e foo bar -e bar baz fi.aardsoft.devicefarmsample
+
+  post_test:
+    commands:
+      - adb -s $DEVICEFARM_DEVICE_UDID pull /storage/emulated/0/Android/data/fi.aardsoft.devicefarmsample/files/output.txt
+      - mv output.txt $DEVICEFARM_LOG_DIR/test-output.txt
+      - mv log-output.txt $DEVICEFARM_LOG_DIR/log-output.txt
+      - ls -l $DEVICEFARM_LOG_DIR
+      - pwd
+      - echo $DEVICEFARM_LOG_DIR
+
+artifacts:
+  - $DEVICEFARM_LOG_DIR

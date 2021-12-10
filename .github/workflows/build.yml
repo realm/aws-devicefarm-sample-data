@@ -43,10 +43,11 @@ jobs:
           ./env${_python}/bin/pip wheel -r env${_python}/requirements.txt -w wheelhouse
           zip sample_env_python${_python}_wh.zip -r wheelhouse
         done
-#    - name: Build Android app
-#      working-directory: ./sample-data/android
-#      run: |
-#        ./gradlew --no-daemon build
+    - name: Build Android app
+      working-directory: ./android
+      run: |
+        ./gradlew --no-daemon build
+        cp build/outputs/apk/debug/android-debug.apk ../fi.aardsoft.devicefarmsample-debug.apk
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
@@ -56,3 +57,5 @@ jobs:
           sample_env_python3.zip
           sample_env_python2_wh.zip
           sample_env_python3_wh.zip
+          test_spec.yaml
+          fi.aardsoft.devicefarmsample-debug.apk
